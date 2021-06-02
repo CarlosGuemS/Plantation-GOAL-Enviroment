@@ -1,0 +1,7 @@
+use processorKnowledge as knowledge.
+use processorBeliefs as beliefs.
+
+module initProcessor {
+	% subscribe to the Processors channel
+	if true then subscribe(allProcessors).
+}

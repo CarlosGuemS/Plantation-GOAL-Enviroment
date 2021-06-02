@@ -1,0 +1,15 @@
+use farmerKnowledge as knowledge.
+use farmerClearResponse as module.
+
+order=linearrandom.
+focus=filter.
+exit=nogoals.
+
+
+module farmerProcessorSearch {
+	
+	if bel(response(T)) then (T).send(acceptTransaction) + delete(pending) + insert(processor(T)) + farmerClearResponse + print(send(acceptTransaction, T)).
+
+	if bel(not(pending)) then insert(pending) + (allProcessors).send(requestTransaction(crop, 1)) + print(send(requestTransaction(crop, 1), allProcessors)).
+	
+}

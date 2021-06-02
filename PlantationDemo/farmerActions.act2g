@@ -1,0 +1,23 @@
+use farmerKnowledge as knowledge.
+
+define healField(I) with
+	pre{ inventory(fertilizer, X), X>0 }
+	post{ true }
+
+define healPlant(I) with
+	pre{ inventory(pesticides, X), X>0 }
+	% Post obtained from the percepts
+	post{ true }
+	
+define plantCrop(I) with
+	pre{ inventory(seeds, X), X>0 }
+	%The post conditions are handled by percepts from the enviroment
+	post{ true }
+	
+define harvest(F, I) with
+	pre{ readyToHarvest(F), id(I), nextID(N), processor(P)  }
+	post{ not(processor(P)), order(I, P, "crops", 1), not(id(I)), id(N) }
+	
+define sendCrops(T, I, R, O, Q) with
+	pre {order(I, R, O, Q), readyToSend(I)}
+	post {sentOrder(I)}

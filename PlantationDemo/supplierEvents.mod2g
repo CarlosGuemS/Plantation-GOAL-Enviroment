@@ -1,0 +1,29 @@
+use supplierKnowledge as knowledge.
+
+order = linearall.
+
+module supplierEvents {
+	%Percept availableTransport
+	if percept(availableTransport(X)), bel(not(availableTransport(Y))) then insert(availableTransport(X)).
+	if not(percept(availableTransport(X))), bel(availableTransport(Y)) then delete(availableTransport(Y)).
+	%Perct timerRun out of time
+	forall percept(timer(I,_)), bel(tempOrder(I, R, O, Q)) do delete(tempOrder(I, R, O, Q)).
+	
+	%Message requestTransaction: message from Farmer for a possible transaction of supplies
+	forall (R).sent(requestTransaction(I,O,Q)) do insert(tempOrder(I, R, O, Q)) + starttimer(I, 500000000, 500000000) + (R).send(offerTransaction) + print(recieved(requestTransaction(I,O,Q), R)) + print(send(offerTransaction, R)).
+	
+	%Message requestTransaction: message from Farmer confirming the specified transaction
+	forall (R).sent(acceptTransaction(I)), bel(tempOrder(I, R, O, Q)) do insert(order(I, R, O, Q)) + adopt(sentOrder(I)) + canceltimer(I) + delete(tempOrder(I, R, O, Q)) + print(recieved(acceptTransaction(I), R)).
+	
+	%Message acceptTransport: message from transporter, accepting transporting the order
+	forall (T).sent(acceptTransport), bel(pending(T, O)) do delete(pending(T,O)) + insert(assign(T,O)) + print(recieved(acceptTransport, T)).
+	
+	%Message rejectTransport: message from transporter, rejecting transporting the order
+	forall (T).sent(rejectTransport), bel(pending(T, O)) do delete(pending(T,O)) + print(recieved(rejectTransport, T)).
+	
+	%Message here: message from transporter indicating he has arrived
+	forall (T).sent(here) do insert(here(T)).
+	
+	%Message to end
+	if (T).sent(kill) then adopt(kill).
+}

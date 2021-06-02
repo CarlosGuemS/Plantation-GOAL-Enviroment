@@ -1,0 +1,17 @@
+use supplierKnowledge as knowledge.
+
+use supplierActions as actionspec.
+
+define readyToSend(T, I, R, O, Q) as bel(order(I, R, O, Q)), bel(assign(T, I)), a-goal(sentOrder(I)).
+define yetToTramit(T, I, R, O, Q) as bel(order(I, R, O, Q)), bel(availableTransport(T)), bel(not(pending(_, I))), bel(not(assign(_, I))),  bel(not(sentOrder(I))).
+
+module supplierMain {
+	%end masd
+	if goal(kill) then exit-module.
+
+	% order ready to send
+	if readyToSend(T, I, R, O, Q) then sendSupplies(T, I, R, O, Q).
+	
+	% Search for transport for an order without one assigned
+	if yetToTramit(T, I, R, O, Q) then (T).send(requestTransport(I,O,Q,R)) + insert(pending(T,I)) + print(send(requestTransport(I,O,Q,R), T)).
+}

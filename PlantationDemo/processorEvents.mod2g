@@ -1,0 +1,15 @@
+use processorKnowledge as knowledge.
+
+module processorEvents {
+	
+	% if any farmer has requested to sending crops to process, make an offer for them. 
+	forall (X).sent(requestTransaction(O,Q)) do (X).send(offerTransaction) + print(recieved(requestTransaction(O,Q), X)) + print(send(offerTransaction, X)).
+	
+	%forall (X).sent(accept) do true.
+	
+	% if any change appear in unprocessedCrops update the value
+	if percept(checkUnprocessedCrops(X)), bel(unprocessedCrops(Y)) then delete(unprocessedCrops(Y)) + insert(unprocessedCrops(X)).
+	
+	%Message to end
+	if (T).sent(kill) then adopt(kill).
+}

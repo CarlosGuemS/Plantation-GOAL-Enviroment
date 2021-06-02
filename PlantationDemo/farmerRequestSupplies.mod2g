@@ -1,0 +1,13 @@
+use farmerKnowledge as knowledge.
+use farmerClearResponse as module.
+
+order=linearrandom.
+focus=filter.
+exit=nogoals.
+
+module farmerRequestSupplies(O, Q) {
+	if bel(response(T)), bel(id(I)), bel(nextID(N)) then (T).send(acceptTransaction(I)) + delete(id(I)) + insert(id(N)) + insert(waitingOrder(O)) + delete(pending) + print(send(acceptTransaction(I), T)) + farmerClearResponse.
+	
+	if bel(not(pending)), bel(id(I)) then insert(pending) + (allSuppliers).send(requestTransaction(I,O,Q)) + print(send(requestTransaction(I,O,Q), allSuppliers)).
+}
+

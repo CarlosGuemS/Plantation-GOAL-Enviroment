@@ -1,0 +1,39 @@
+use transportKnowledge as knowledge.
+use transporterActions as actionspec.
+
+exit = never.
+
+% condition: move to the sender position
+define moveToSender(X, Y) as bel(position(X)), a-goal(position(Y)), bel(sender(Y)).
+
+% condition: be ready to load the inventory.
+define readyToLoad(X, Y) as bel(position(X)), bel(sender(X)), bel(reciever(Y)).
+
+% condition: if it has loaded the inventory from the sender, go to receiver position
+define moveToReciever(X, Y) as bel(position(X)), a-goal(position(Y)), bel(reciever(Y)).
+
+% condition: be ready to unload the inventory to the receiver
+define readyToUnload(X, Y, O, Q) as bel(position(X)), bel(sender(Y)), bel(reciever(X)), bel(inventory(O, Q)).
+
+
+module transporterAgent {
+	
+	%end masd
+	if goal(kill) then exit-module.
+
+	% accept the request if transporter is available
+	if bel(accepted), bel(sender(X)) then acceptRequest + delete(accepted) + adopt(position(X)).
+	
+	% move to the sender position
+	if moveToSender(X,Y) then move(X, Y).
+	
+	% if the transporter is ready to unload, warn the sender and wait to the inventory load
+	if readyToLoad(X, Y) then adopt(position(Y)) + (X).send(here).
+	
+	% move to the receiver position
+	if moveToReciever(X, Y), bel(inventory(O,Q)) then move(X, Y).
+	
+	% if transporter is ready to unload, unload the inventory
+	if readyToUnload(X, Y, O, Q) then unload(X, O, Q) + delete(sender(Y)) + delete(reciever(X)).
+	
+}

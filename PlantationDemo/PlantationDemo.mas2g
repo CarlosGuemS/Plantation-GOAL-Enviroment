@@ -1,0 +1,33 @@
+use "PlantationEnviroment2-1.0.jar" as environment.
+
+define supplier as agent {
+	use supplierInit as init module.
+	use supplierMain as main module.
+	use supplierEvents as event module.
+}
+
+define farmer as agent {
+	use farmerInit as init module.
+	use farmerMain as main module.
+	use farmerEvents as event module.
+}
+
+define transporter as agent {
+	use transporterInit as init module.
+	use transporterAgent as main module.
+	use transporterEvents as event module.
+}
+
+define processor as agent {
+	use processorInit as init module.
+	use processorAgent as main module.
+	use processorEvents as event module.
+}
+
+
+launchpolicy{
+	when name = supplier launch supplier.
+	when name = farmer launch farmer.
+	when name = transporter launch transporter.
+	when name = processor launch processor.
+}

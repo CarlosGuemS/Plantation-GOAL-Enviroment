@@ -1,0 +1,5 @@
+use supplierKnowledge as knowledge.
+
+define sendSupplies(T, I, R, O, Q) with
+	pre{ order(I, R, O, Q), assign(T, I), here(T) }
+	post{ not(assign(T, I)), sentOrder(I), not(here(T)) }

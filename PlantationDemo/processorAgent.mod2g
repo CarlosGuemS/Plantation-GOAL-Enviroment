@@ -1,0 +1,18 @@
+use processorKnowledge as knowledge.
+use processorGoals as goals.
+use processorActions as actionspec.
+
+exit = never.
+
+module processorAgent {
+	%end masd
+	if goal(kill) then end + exit-module.
+	
+	if bel(processedCrops(10)) then all.send(kill).
+
+	% if there is any unprocessed crop, process it
+	if goal(unprocessedCrops(0)) then processCrop.
+	
+	% if any unprocessed crop, adopt the goal to process it
+	if bel(not(noPendingCrops)) then adopt(unprocessedCrops(0)).
+}

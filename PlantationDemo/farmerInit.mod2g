@@ -1,0 +1,6 @@
+use farmerKnowledge as knowledge.
+use farmerInitBeliefs as beliefs.
+
+module farmerInit {
+	if true then print("Farmer init!").
+}

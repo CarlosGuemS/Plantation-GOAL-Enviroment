@@ -1,0 +1,1 @@
+inventory(pesticides, 0). inventory(fertilizer, 0). inventory(seeds, 0). id(0).

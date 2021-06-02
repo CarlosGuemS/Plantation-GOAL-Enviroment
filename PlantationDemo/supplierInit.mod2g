@@ -1,0 +1,6 @@
+use supplierKnowledge as knowledge.
+use supplierInitBeliefs as beliefs.
+
+module supplierInit {
+	if true then subscribe(allSuppliers).
+}

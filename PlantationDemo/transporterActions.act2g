@@ -1,0 +1,17 @@
+use transportKnowledge as knowledge.
+
+% action of move from a position to the wanted position
+define move(X,Y) with
+	pre{ true }
+	post{ true }
+
+% unload the inventory to the reciever 
+define unload(A, O, Q) with
+	pre{reciever(A), position(A), inventory(O, Q)}
+	post{not(inventory(O, Q))}
+
+% accept the request of transportation
+define acceptRequest with
+	pre{true}
+	post{true}
+	

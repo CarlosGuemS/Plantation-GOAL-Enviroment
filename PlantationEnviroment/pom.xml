@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>MASD</groupId>
+  <artifactId>PlantationEnviroment2</artifactId>
+  <version>1.0</version>
+  <name>Plantation Enviroment 2</name>
+  
+  <repositories>
+	  <repository>
+	     <id>eishub</id>
+	     <url>https://raw.github.com/eishub/mvn-repo/master/</url>
+	     <snapshots>
+	         <enabled>true</enabled>
+	         <updatePolicy>always</updatePolicy>
+	     </snapshots>
+	  </repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+		    <groupId>eishub</groupId>
+		    <artifactId>eis</artifactId>
+		    <version>0.6.1</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<pluginManagement>
+      	<plugins>
+      		<plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-jar-plugin</artifactId>
+		      <configuration>
+		          <archive>
+		              <manifest>
+		                  <addClasspath>true</addClasspath>
+		                  <mainClass>main.Plantation</mainClass>
+		              </manifest>
+		          </archive>
+		      </configuration>
+		
+		      <executions>
+		          <execution>
+		              <id>test</id>
+		              <goals>
+		                  <goal>jar</goal>
+		              </goals>
+		              <phase>package</phase>
+		              <configuration>
+		                  <archive>
+		                      <manifest>
+		                          <addClasspath>true</addClasspath>
+		                          <mainClass>main.Plantation</mainClass>
+		                      </manifest>
+		                  </archive>
+		                  <classifier>test</classifier>
+		              </configuration>
+		          </execution>
+		      </executions>
+		  </plugin>
+      	</plugins>
+      	</pluginManagement>
+	</build>
+		
+      	
+</project>

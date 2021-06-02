@@ -1,0 +1,28 @@
+use transportKnowledge as knowledge.
+
+order = linearall.
+
+module transporterEvents {
+	% if any change in the availability, the environment change the state and send a percept
+	if percept(available(1)), bel(not(available)) then insert(available).
+	if percept(available(0)), bel(available) then delete(available).
+
+	% if transporter agent receive any request and it is not available, reject the request
+	forall (X).sent(requestTransport(I, O, Q, R)), bel(not(available)) do (X).send(rejectTransport) + print("Reject sent") + print(recieved((requestTransport(I, O, Q, R), X))) + print(send(rejectTransport, X)).
+	
+	% if transporter receive a request and it is available, accept the request
+	if (X).sent(requestTransport(I, O, Q, R)), bel(available) then insert(reciever(R)) + insert(sender(X)) + insert(accepted) + (X).send(acceptTransport) + insert(id(I)) + print(recieved((requestTransport(I, O, Q, R), X))) + print(send(acceptTransport, X)).
+	% Reject those messages that could've been accepted but haven't because only one can be accepted
+	forall (X).sent(requestTransport(I, O, Q, R)), bel(not(sender(X))), bel(not(id(I))), bel(available) do (X).send(rejectTransport) + print(recieved((requestTransport(I, O, Q, R), X))) + print(send(rejectTransport, X)).
+	% Eliminate the id belief (only in this context)
+	if bel(id(X)) then delete(id(X)).
+	
+	% if any change in the position, update the position in the mental state 
+	if percept(currentPosition(Y)), bel(position(X)) then delete(position(X)) + insert(position(Y)).
+	
+	% check if any inventory item is loaded to the transport, update cognitive state with the new inventory
+	if percept(currentInventory(O,Q)) then insert(inventory(O,Q)).
+	
+	%Message to end
+	if (T).sent(kill) then adopt(kill).
+}

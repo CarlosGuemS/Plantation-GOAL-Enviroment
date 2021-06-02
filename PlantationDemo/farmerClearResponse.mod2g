@@ -1,0 +1,8 @@
+use farmerKnowledge as knowledge.
+
+exit=always.
+
+
+module farmerClearResponse {
+	forall bel(response(X)) do delete(response(X)).
+}

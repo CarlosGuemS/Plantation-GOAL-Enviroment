@@ -1,0 +1,11 @@
+use processorKnowledge as knowledge.
+
+% action to process a crop, decrease the number of unprocessed crops in 1
+define processCrop with
+	pre{ unprocessedCrops(X), not(noPendingCrops), processedCrops(Y), nextprocessedCrops(Z) }
+	post{ not(processedCrops(Y)), processedCrops(Z)}
+	
+define end with
+	pre {true}
+	post {true}
+	

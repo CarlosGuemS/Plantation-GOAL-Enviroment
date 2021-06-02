@@ -1,0 +1,6 @@
+use transportKnowledge as knowledge.
+use transporterBeliefs as beliefs.
+
+module transporterInit {
+	if true then print("Transporter init!").
+}

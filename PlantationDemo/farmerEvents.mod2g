@@ -1,0 +1,41 @@
+use farmerKnowledge as knowledge.
+
+order = linearall.
+
+module farmerEvents {
+	%Percept seeds
+	if percept(seeds(X)), bel(inventory(seeds, Y)) then delete(inventory(seeds, Y)) + insert(inventory(seeds, X)).
+	%Percept fertilizer
+	if percept(fertilizer(X)), bel(inventory(fertilizer, Y)) then delete(inventory(fertilizer, Y)) + insert(inventory(fertilizer, X)).
+	%Percept pesticides
+	if percept(pesticides(X)), bel(inventory(pesticides, Y)) then delete(inventory(pesticides, Y)) + insert(inventory(pesticides, X)).
+	%Percept fields
+	forall percept(field(X)) do insert(field(X)).
+	%Percept fieldInUse
+	forall percept(fieldInUse(X)), not(bel(fieldInUse(X))) do insert (fieldInUse(X)) + adopt(fieldUnused(X)).
+	forall bel(fieldInUse(X)), not(percept(fieldInUse(X))) do delete (fieldInUse(X)).
+	%Percept sickPlant
+	forall percept(sickPlant(X)), not(bel(sickPlant(X))) do insert (sickPlant(X)).
+	forall bel(sickPlant(X)), not(percept(sickPlant(X))) do delete (sickPlant(X)).
+	%Percept weakSoil
+	forall percept(weakSoil(X)), not(bel(weakSoil(X))) do insert (weakSoil(X)).
+	forall bel(weakSoil(X)), not(percept(weakSoil(X))) do delete (weakSoil(X)).
+	%Percept readyToHarvest
+	if percept(readyToHarvest(X)), not(bel(readyToHarvest(X))) then insert (readyToHarvest(X)).
+	forall bel(readyToHarvest(X)), not(percept(readyToHarvest(X))) do delete (readyToHarvest(X)).
+	%Percept availableTransport
+	if percept(availableTransport(X)), bel(not(availableTransport(Y))) then insert(availableTransport(X)).
+	if not(percept(availableTransport(X))), bel(availableTransport(Y)) then delete(availableTransport(Y)).
+	
+	%Message offerTransaction
+	forall (T).sent(offerTransaction), bel(pending) do insert(response(T)) + print(recieved(offerTransaction, T)).
+	%Message acceptTransport: message from transporter, accepting transporting the order
+	forall (T).sent(acceptTransport), bel(pending(T, O)) do delete(pending(T,O)) + insert(assign(T,O)) + print(recieved(acceptTransport, T)).
+	%Message rejectTransport: message from transporter, rejecting transporting the order
+	forall (T).sent(rejectTransport), bel(pending(T, O)) do delete(pending(T,O)) + print(recieved(rejectTransport, T)).
+	%Message here: message from transporter indicating he has arrived
+	forall (T).sent(here) do insert(here(T)) + print(recieved(here, T)).
+	
+	%Message to end
+	if (T).sent(kill) then adopt(kill).
+}

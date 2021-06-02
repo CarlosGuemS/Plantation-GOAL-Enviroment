@@ -1,0 +1,60 @@
+use farmerKnowledge as knowledge.
+use farmerRequestSupplies as module.
+use farmerProcessorSearch as module.
+
+use farmerActions as actionspec.
+
+exit=never.
+order=linearrandom.
+
+define readyToSend(T, I, R, O, Q) as bel(order(I, R, O, Q)), bel(assign(T, I)), a-goal(sentOrder(I)).
+define yetToTramit(T, I, R, O, Q) as bel(order(I, R, O, Q)), bel(availableTransport(T)), bel(not(pending(_, I))), bel(not(assign(_, I))),  bel(not(sentOrder(I))).
+define arrivedOrder(X) as bel(waitingOrder(X)), bel(not(inventory(X,0))).
+
+%Rules ordered from highest to lowest priority
+module farmerMain {
+	%end masd
+	if goal(kill) then exit-module.
+
+	% order ready to send
+	if readyToSend(T, I, R, O, Q) then sendCrops(T, I, R, O, Q).
+	
+	%Confirm the recieval of seeds, perticides or fertilizer
+	forall arrivedOrder(X) do delete(waitingOrder(X)).
+	
+	%If we have any orders to place, make them
+	if a-goal(waitingOrder(X)) then farmerRequestSupplies(X, 5).
+	
+	% Treat any plant (if possible)
+	if bel(sickPlant(X)), bel(not(waitingOrder(pesticides))) then {
+		if true then healPlant(X).
+		% Otherwise obtain Pesticide
+		if true then adopt(waitingOrder(pesticides)).
+	}
+	
+	% Treat any field (if we can)
+	if bel(weakSoil(X)), bel(not(waitingOrder(fertilizer))) then {
+		if true then healField(X).
+		% Otherwise obtain fertilizer
+		if true then adopt(waitingOrder(fertilizer)).
+	}
+	
+	%Plant any unused field (if possible)
+	if bel(fieldUnused(X)), bel(not(waitingOrder(seeds))) then {
+		if true then plantCrop(X).
+		% Otherwise obtain fertilizer
+		if true then adopt(waitingOrder(seeds)).
+	}
+	
+	% Search for transport for an order without one assigned
+	if yetToTramit(T, I, R, O, Q) then (T).send(requestTransport(I,O,Q,R)) + insert(pending(T,I)) + print(send(requestTransport(I,O,Q,R), T)).
+	
+	% Harvest plants: first check if we are already waiting to have a processor
+	if a-goal(processorAvailable) then farmerProcessorSearch.
+	% If we can harvest, then harvest
+	if a-goal(fieldUnused(X)), bel(id(I)) then harvest(X, I) + adopt(sentOrder(I)).
+	% If there a field reay to harvest, but we haven't a processor to send crops to, choose one
+	if a-goal(fieldUnused(X)), bel(readyToHarvest(_)), bel(not(processorAvailable)) then adopt(processorAvailable).
+	
+	
+}
